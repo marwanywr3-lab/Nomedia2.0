@@ -1,0 +1,1124 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0B0B0C" />
+  <title>نوميديا | NoMedia — تحدي ٧ أيام بدون سوشال ميديا</title>
+  <link rel="icon" type="image/png" href="./image_1.png" />
+  <link rel="apple-touch-icon" href="./image_1.png" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Tajawal:wght@500;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <style>
+    html {
+      font-family: 'IBM Plex Sans Arabic', 'Tajawal', system-ui, sans-serif;
+      background-color: #0B0B0C;
+      color: #F4F4F5;
+      color-scheme: dark;
+    }
+    .app-card {
+      background-color: #141416;
+      border: 1px solid #26262A;
+      border-radius: 14px;
+    }
+    .app-input {
+      background-color: #1C1C20;
+      border: 1px solid #2D2D33;
+      border-radius: 10px;
+      color: #FFFFFF;
+      transition: border-color 150ms ease, background-color 150ms ease;
+    }
+    .app-input:focus {
+      outline: none;
+      border-color: #D4602D;
+      background-color: #202025;
+    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    @media print {
+      body { background: #FFFFFF !important; color: #0B0B0C !important; }
+      .no-print { display: none !important; }
+      .print-only-card { background: #FFFFFF !important; color: #0B0B0C !important; border: 1px solid #D4D4D8 !important; }
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-[#0B0B0C] text-[#F4F4F5] pb-16 antialiased selection:bg-[#D4602D] selection:text-white">
+  <!-- Toast Container -->
+  <div id="toast-wrap" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 no-print px-4 w-full max-w-md hidden"></div>
+
+  <!-- Top Bar -->
+  <header class="sticky top-0 z-30 bg-[#0B0B0C]/90 backdrop-blur-md border-b border-[#222226] no-print">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
+      <div class="flex items-center gap-3 min-w-0">
+        <img
+          src="./image_1.png"
+          alt="شعار نوميديا"
+          class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg object-cover border border-[#D4602D]/50 shrink-0"
+        />
+        <div class="min-w-0 flex items-center gap-2.5">
+          <h1 class="text-lg sm:text-xl font-bold tracking-tight text-white leading-none">نوميديا</h1>
+          <span class="text-[11px] font-semibold tracking-wider uppercase text-zinc-400 border border-[#2A2A30] bg-[#141416] px-2 py-0.5 rounded-md">NoMedia</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 shrink-0">
+        <button
+          id="btn-install"
+          type="button"
+          class="h-9 px-3 rounded-lg border border-[#2A2A30] bg-[#141416] hover:border-zinc-500 text-xs font-medium text-zinc-200 hover:text-white transition-colors flex items-center gap-1.5"
+          title="تثبيت التطبيق"
+        >
+          <i data-lucide="download" class="w-3.5 h-3.5 text-[#D4602D]"></i>
+          <span class="hidden sm:inline">تثبيت التطبيق</span>
+        </button>
+
+        <button
+          id="btn-settings"
+          type="button"
+          class="h-9 px-3 rounded-lg bg-white hover:bg-zinc-200 text-[#0B0B0C] text-xs font-semibold transition-colors flex items-center gap-1.5"
+          title="الضبط وإعدادات الذكاء الاصطناعي"
+        >
+          <i data-lucide="settings" class="w-3.5 h-3.5"></i>
+          <span>الضبط</span>
+          <span id="api-dot" class="w-2 h-2 rounded-full bg-[#D4602D] hidden"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 pt-5 space-y-5">
+    <!-- 7-Day Quick-Tab Challenge Schedule -->
+    <section aria-label="جدول أيام التحدي السبعة" class="no-print">
+      <div id="days-tabs" class="flex gap-2 overflow-x-auto no-scrollbar pb-1 sm:grid sm:grid-cols-7"></div>
+      <div class="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-zinc-400">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-[#D4602D]"></span>
+          <span id="selected-day-label" class="text-zinc-200 font-medium">الأربعاء - ٢٥ نوفمبر ٢٠٢٦</span>
+        </div>
+        <span class="text-zinc-500">محفوظ محلياً تلقائياً</span>
+      </div>
+    </section>
+
+    <!-- Previous-Day Reflections (Day 2+ only) -->
+    <section id="reflection-card" class="app-card p-4 sm:p-5 no-print hidden">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-3.5">
+        <div class="flex items-center gap-2.5">
+          <h2 class="text-sm sm:text-base font-bold text-white">كيف كان أمس؟</h2>
+          <span id="reflection-prev-badge" class="text-xs text-zinc-400 bg-[#1C1C20] border border-[#2D2D33] px-2 py-0.5 rounded-md"></span>
+        </div>
+        <span class="text-xs text-zinc-500">١ سهل ←→ ١٠ صعب</span>
+      </div>
+      <div id="difficulty-scale" class="grid grid-cols-5 sm:grid-cols-10 gap-1.5 mb-3.5"></div>
+      <div>
+        <label for="trigger-input" class="block text-xs font-medium text-zinc-400 mb-1.5">
+          متى حسيت برغبة تفتح السوشال ميديا؟
+        </label>
+        <input
+          id="trigger-input"
+          type="text"
+          placeholder="مثلاً: بعد الغداء، قبل النوم، وقت الملل في الانتظار..."
+          class="w-full px-3.5 py-2.5 app-input text-sm"
+        />
+      </div>
+    </section>
+
+    <!-- 1. The 24-Hour Coverage Bar -->
+    <section class="app-card p-4 sm:p-5 no-print">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+        <h2 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+          <i data-lucide="clock" class="w-4 h-4 text-[#D4602D]"></i>
+          <span>تغطية الـ ٢٤ ساعة</span>
+        </h2>
+        <div id="coverage-summary" class="text-xs sm:text-sm font-medium text-white bg-[#1C1C20] border border-[#2A2A30] px-3 py-1 rounded-lg"></div>
+      </div>
+      <div id="coverage-bar" class="w-full h-7 rounded-lg bg-[#0B0B0C] border border-[#26262A] flex overflow-hidden"></div>
+      <div id="coverage-legend" class="mt-3 flex flex-wrap gap-2"></div>
+    </section>
+
+    <!-- Main Action Hub Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 no-print">
+      <!-- 2. Simplified Activity Form -->
+      <section class="lg:col-span-7 app-card p-4 sm:p-5">
+        <h2 class="text-sm sm:text-base font-bold text-white mb-4 flex items-center gap-2">
+          <i data-lucide="plus" class="w-4 h-4 text-[#D4602D]"></i>
+          <span>إضافة نشاط</span>
+        </h2>
+        <form id="activity-form" class="space-y-4">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label for="start-time" class="block text-xs font-medium text-zinc-400 mb-1.5">من</label>
+              <select id="start-time" class="w-full px-3 py-2.5 app-input text-sm"></select>
+            </div>
+            <div>
+              <label for="end-time" class="block text-xs font-medium text-zinc-400 mb-1.5">إلى</label>
+              <select id="end-time" class="w-full px-3 py-2.5 app-input text-sm"></select>
+            </div>
+          </div>
+
+          <div>
+            <label for="activity-note" class="block text-xs font-medium text-zinc-400 mb-1.5">إيش سويت؟</label>
+            <input
+              id="activity-note"
+              type="text"
+              placeholder="مثلاً: مذاكرة رياضيات، تمرين جري، مشروع نوميديا..."
+              class="w-full px-3.5 py-2.5 app-input text-sm"
+            />
+          </div>
+
+          <div>
+            <span class="block text-xs font-medium text-zinc-400 mb-2">التصنيف</span>
+            <div id="category-buttons" class="grid grid-cols-2 sm:grid-cols-3 gap-2"></div>
+          </div>
+
+          <button
+            type="submit"
+            class="w-full py-2.5 rounded-lg bg-[#D4602D] hover:bg-[#E06D3B] text-white text-sm font-semibold transition-colors"
+          >
+            + إضافة للجدول
+          </button>
+        </form>
+      </section>
+
+      <!-- Right Column: Smart Natural Language + Fast Actions -->
+      <div class="lg:col-span-5 flex flex-col gap-5">
+        <!-- 3. Smart Natural Language Input -->
+        <section class="app-card p-4 sm:p-5 flex-1 flex flex-col">
+          <div class="flex items-center justify-between gap-2 mb-3">
+            <h2 class="text-sm sm:text-base font-bold text-white flex items-center gap-1.5">
+              <i data-lucide="sparkles" class="w-4 h-4 text-[#D4602D]"></i>
+              <span>الإدخال الذكي بالعامية</span>
+            </h2>
+            <span id="ai-badge" class="text-[11px] font-medium text-[#D4602D] bg-[#D4602D]/10 border border-[#D4602D]/30 px-2 py-0.5 rounded-md hidden">Gemini 3.5</span>
+          </div>
+          <label for="diary-input" class="block text-xs text-zinc-400 mb-1.5">سالفة اليوم</label>
+          <textarea
+            id="diary-input"
+            rows="4"
+            placeholder="مثال: صحيت ٧ الصبح رحت للدوام لين ٢ وتغديت ونمت العصر ساعة بعدين لعبت كورة..."
+            class="w-full flex-1 px-3.5 py-2.5 app-input text-sm resize-none mb-3.5"
+          ></textarea>
+          <div id="diary-action-wrap"></div>
+        </section>
+
+        <!-- 5. Fast-Action Buttons -->
+        <section class="app-card p-4">
+          <h2 class="text-xs font-semibold text-zinc-400 mb-3">روتين وطوارئ</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <button
+              id="btn-copy-yesterday"
+              type="button"
+              class="py-2.5 px-3 rounded-lg border border-[#2A2A30] bg-[#1C1C20] hover:border-zinc-500 text-xs sm:text-sm font-medium text-zinc-200 hover:text-white transition-colors flex items-center justify-center gap-2"
+            >
+              <i data-lucide="copy" class="w-4 h-4 text-zinc-400"></i>
+              <span>نسخ روتين الأمس</span>
+            </button>
+            <button
+              id="btn-sos"
+              type="button"
+              class="py-2.5 px-3 rounded-lg bg-[#D4602D] hover:bg-[#E06D3B] text-white text-xs sm:text-sm font-semibold transition-colors flex items-center justify-center gap-2"
+            >
+              <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+              <span>SOS - الحقني! 🚨</span>
+            </button>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- 4. Interactive Daily Log List + Pattern Coach Advice -->
+    <section class="app-card p-4 sm:p-5 no-print">
+      <div class="flex items-center justify-between gap-2 mb-4">
+        <div class="flex items-center gap-2.5">
+          <h2 class="text-sm sm:text-base font-bold text-white">سجل اليوم</h2>
+          <span id="log-count-badge" class="text-xs font-medium text-zinc-400 bg-[#1C1C20] border border-[#2A2A30] px-2 py-0.5 rounded-md">٠ أنشطة</span>
+        </div>
+        <span class="text-xs text-zinc-500">اضغط المزاج للتبديل</span>
+      </div>
+      <div id="daily-log-list" class="space-y-2"></div>
+
+      <!-- Pattern Coach Advice -->
+      <div class="mt-5 pt-4 border-t border-[#222226]">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+          <h3 class="text-xs font-semibold text-zinc-300 flex items-center gap-1.5">
+            <i data-lucide="flame" class="w-3.5 h-3.5 text-[#D4602D]"></i>
+            <span>نصيحة اليوم</span>
+          </h3>
+          <button id="btn-refresh-advice" type="button" class="text-xs font-medium text-[#D4602D] hover:text-[#E06D3B] hidden">
+            توليد نصيحة اليوم
+          </button>
+        </div>
+        <div id="coach-advice-box"></div>
+      </div>
+    </section>
+
+    <!-- Day 7 "شرف إنجاز" End-Of-Challenge Summary -->
+    <section id="day7-summary" class="app-card p-5 sm:p-6 print-only-card hidden"></section>
+  </main>
+
+  <!-- SOS Modal -->
+  <div id="modal-sos" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm items-center justify-center p-4 no-print hidden">
+    <div class="app-card w-full max-w-lg p-5 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between gap-2 mb-4 pb-3 border-b border-[#26262A]">
+        <h2 class="text-base font-bold text-white flex items-center gap-2">
+          <i data-lucide="alert-triangle" class="w-4 h-4 text-[#D4602D]"></i>
+          <span>SOS — لحظة وعي قبل فتح السوشال ميديا</span>
+        </h2>
+        <button id="btn-close-sos" type="button" class="p-1.5 rounded-lg bg-[#1C1C20] border border-[#2A2A30] text-zinc-400 hover:text-white">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="rounded-xl bg-[#0B0B0C] border border-[#26262A] p-3.5 mb-4 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+          <i data-lucide="timer" class="w-5 h-5 text-[#D4602D]"></i>
+          <div>
+            <div class="text-[11px] text-zinc-400">مؤقت تهدئة الرغبة (٦٠ ثانية)</div>
+            <div id="sos-timer-text" class="text-sm font-semibold text-white">خذ نفساً عميقاً... باقي ٦٠ ثانية</div>
+          </div>
+        </div>
+        <button id="btn-reset-sos-timer" type="button" class="px-2.5 py-1 rounded-md bg-[#1C1C20] border border-[#2D2D33] text-xs font-medium text-zinc-200 hover:border-[#D4602D]">إعادة</button>
+      </div>
+
+      <div class="flex items-center justify-between mb-2.5">
+        <span class="text-xs font-medium text-zinc-400">٣ بدائل فورية بدون شاشات:</span>
+        <span id="sos-loading-badge" class="text-xs text-[#D4602D] hidden">جاري التخصيص بالذكاء الاصطناعي...</span>
+      </div>
+      <div id="sos-ideas-list" class="space-y-2.5 mb-5"></div>
+
+      <button id="btn-done-sos" type="button" class="w-full py-2.5 rounded-lg bg-white hover:bg-zinc-200 text-[#0B0B0C] text-sm font-semibold transition-colors">
+        تجاوزت الرغبة — رجوع ليومي ✓
+      </button>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div id="modal-settings" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm items-center justify-center p-4 no-print hidden">
+    <div class="app-card w-full max-w-md p-5 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between gap-2 mb-4 pb-3 border-b border-[#26262A]">
+        <h2 class="text-base font-bold text-white flex items-center gap-2">
+          <i data-lucide="settings" class="w-4 h-4 text-[#D4602D]"></i>
+          <span>الضبط وإعدادات الذكاء الاصطناعي</span>
+        </h2>
+        <button id="btn-close-settings" type="button" class="p-1.5 rounded-lg bg-[#1C1C20] border border-[#2A2A30] text-zinc-400 hover:text-white">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label for="api-key-input" class="block text-xs font-medium text-zinc-300 mb-1.5">
+            مفتاح Google AI Studio API (نموذج gemini-3.5-flash)
+          </label>
+          <div class="flex gap-2">
+            <input id="api-key-input" type="password" dir="ltr" placeholder="AIzaSy..." class="flex-1 px-3 py-2 app-input text-sm font-mono" />
+            <button id="btn-toggle-key" type="button" class="px-3 rounded-lg border border-[#2D2D33] bg-[#1C1C20] text-zinc-300 hover:text-white" title="إظهار/إخفاء">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
+          <p class="text-[11px] text-zinc-500 mt-1.5">
+            يُحفظ المفتاح محلياً في متصفحك (localStorage) فقط ولا يُرسل لأي خادم خارجي سوى Google AI.
+          </p>
+        </div>
+
+        <div class="flex gap-2">
+          <button id="btn-test-api" type="button" class="flex-1 py-2.5 rounded-lg bg-[#D4602D] hover:bg-[#E06D3B] text-white text-xs sm:text-sm font-semibold">
+            تحقق من الاتصال
+          </button>
+          <button id="btn-save-api" type="button" class="px-4 py-2.5 rounded-lg bg-white hover:bg-zinc-200 text-[#0B0B0C] text-xs sm:text-sm font-semibold">
+            حفظ وإغلاق
+          </button>
+        </div>
+
+        <div id="api-status-box" class="p-3 rounded-lg border text-xs font-medium hidden"></div>
+
+        <div class="pt-4 border-t border-[#26262A] space-y-2.5">
+          <div class="text-xs font-medium text-zinc-400">إدارة البيانات المحلية</div>
+          <div class="flex gap-2">
+            <button id="btn-export-json" type="button" class="flex-1 py-2 px-3 rounded-lg border border-[#2A2A30] bg-[#1C1C20] hover:border-zinc-500 text-xs font-medium text-zinc-200">
+              تصدير نسخة JSON
+            </button>
+            <button id="btn-reset-data" type="button" class="py-2 px-3 rounded-lg border border-red-500/30 bg-red-950/20 hover:bg-red-950/40 text-red-300 text-xs font-medium">
+              تصفير السجلات
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Install Guide Modal -->
+  <div id="modal-install" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm items-center justify-center p-4 no-print hidden">
+    <div class="app-card w-full max-w-sm p-5">
+      <div class="flex items-center justify-between mb-3 pb-3 border-b border-[#26262A]">
+        <h2 class="text-sm font-bold text-white flex items-center gap-2">
+          <i data-lucide="download" class="w-4 h-4 text-[#D4602D]"></i>
+          <span>تثبيت تطبيق نوميديا (PWA)</span>
+        </h2>
+        <button id="btn-close-install" type="button" class="p-1.5 rounded-lg bg-[#1C1C20] border border-[#2A2A30] text-zinc-400 hover:text-white">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <ul class="space-y-2.5 text-xs sm:text-sm text-zinc-300 leading-relaxed mb-4">
+        <li>• <strong class="text-white">أندرويد (Chrome):</strong> اضغط قائمة النقاط الثلاث (⋮) ثم اختر <strong class="text-white">تثبيت التطبيق</strong>.</li>
+        <li>• <strong class="text-white">آيفون (Safari):</strong> اضغط زر المشاركة ثم اختر <strong class="text-white">إضافة إلى الصفحة الرئيسية</strong>.</li>
+        <li>• يعمل التطبيق بالكامل بدون إنترنت ويحفظ بياناتك تلقائياً على جهازك.</li>
+      </ul>
+      <button id="btn-ok-install" type="button" class="w-full py-2.5 rounded-lg bg-white hover:bg-zinc-200 text-[#0B0B0C] text-xs font-semibold">فهمت</button>
+    </div>
+  </div>
+
+  <script>
+    const CHALLENGE_DAYS = [
+      { id: '2026-11-25', dayNum: 1, dayName: 'الأربعاء', shortDate: '٢٥ نوفمبر', fullLabel: 'الأربعاء - ٢٥ نوفمبر ٢٠٢٦' },
+      { id: '2026-11-26', dayNum: 2, dayName: 'الخميس', shortDate: '٢٦ نوفمبر', fullLabel: 'الخميس - ٢٦ نوفمبر ٢٠٢٦' },
+      { id: '2026-11-27', dayNum: 3, dayName: 'الجمعة', shortDate: '٢٧ نوفمبر', fullLabel: 'الجمعة - ٢٧ نوفمبر ٢٠٢٦' },
+      { id: '2026-11-28', dayNum: 4, dayName: 'السبت', shortDate: '٢٨ نوفمبر', fullLabel: 'السبت - ٢٨ نوفمبر ٢٠٢٦' },
+      { id: '2026-11-29', dayNum: 5, dayName: 'الأحد', shortDate: '٢٩ نوفمبر', fullLabel: 'الأحد - ٢٩ نوفمبر ٢٠٢٦' },
+      { id: '2026-11-30', dayNum: 6, dayName: 'الاثنين', shortDate: '٣٠ نوفمبر', fullLabel: 'الاثنين - ٣٠ نوفمبر ٢٠٢٦' },
+      { id: '2026-12-01', dayNum: 7, dayName: 'الثلاثاء', shortDate: '١ ديسمبر', fullLabel: 'الثلاثاء - ١ ديسمبر ٢٠٢٦' },
+    ];
+
+    const CATEGORIES = [
+      { id: 'sleep', label: 'نوم', emoji: '💤', color: '#3F3F46', textColor: '#FFFFFF' },
+      { id: 'study', label: 'دراسة/عمل', emoji: '📚', color: '#FFFFFF', textColor: '#0B0B0C' },
+      { id: 'projects', label: 'مشاريع/هوايات', emoji: '🧡', color: '#D4602D', textColor: '#FFFFFF' },
+      { id: 'fitness', label: 'رياضة', emoji: '🏃‍♂️', color: '#E88B5A', textColor: '#0B0B0C' },
+      { id: 'rest', label: 'راحة', emoji: '🛋️', color: '#71717A', textColor: '#FFFFFF' },
+      { id: 'idle', label: 'ملل/وقت ضائع', emoji: '⏳', color: '#27272A', textColor: '#A1A1AA' },
+    ];
+
+    const MOODS = [
+      { id: 'calm', emoji: '😊', label: 'رائق' },
+      { id: 'focused', emoji: '🔥', label: 'متحمس' },
+      { id: 'neutral', emoji: '😐', label: 'عادي' },
+      { id: 'stressed', emoji: '😤', label: 'مضغوط' },
+    ];
+
+    const OFFLINE_SOS_IDEAS = [
+      { title: 'اشرب كوب ماء بارد ببطء', detail: 'قم من مكانك، املأ كوب ماء، واشربه بعيداً عن أي شاشة لمدة دقيقتين.' },
+      { title: 'تمرين تنفس 4-4-4', detail: 'شهيق ٤ ثوانٍ، حبس ٤ ثوانٍ، زفير ٤ ثوانٍ — كررها ٥ مرات لكسر الرغبة الفورية.' },
+      { title: 'رتّب سطح مكتبك أو غرفتك ٣ دقائق', detail: 'اختر زاوية صغيرة ورتبها فوراً؛ الحركة الجسدية تطفئ الملل أسرع من التصفح.' },
+      { title: 'اكتب ٣ أفكار على ورقة', detail: 'أمسك قلماً وورقة واكتب أي شيء يشغل بالك الآن بدون جوال.' },
+      { title: 'تمشية سريعة ٥ دقائق', detail: 'اترك الجوال في الغرفة وامشِ داخل البيت أو الحوش مع تمدد خفيف للكتفين.' },
+      { title: 'اقرأ ٣ صفحات من كتاب ورقي', detail: 'حوّل لحظة الفراغ إلى هدوء حقيقي بعيداً عن الإشعارات.' },
+    ];
+
+    const STORAGE_KEY = 'nomedia_pwa_state_v1';
+    const GEMINI_MODEL = 'gemini-3.5-flash';
+
+    const toAr = (v) => String(v).replace(/\d/g, (d) => '٠١٢٣٤٥٦٧٨٩'[Number(d)]);
+    const escapeHtml = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+    const formatHoursAr = (h) => {
+      const r = Math.round(h * 10) / 10;
+      const num = Number.isInteger(r) ? toAr(r) : toAr(r.toFixed(1));
+      if (r === 1) return 'ساعة واحدة';
+      if (r === 2) return 'ساعتين';
+      if (r >= 3 && r <= 10 && Number.isInteger(r)) return `${num} ساعات`;
+      return `${num} ساعة`;
+    };
+
+    const timeToMinutes = (t) => {
+      if (!t || !t.includes(':')) return 0;
+      const [h, m] = t.split(':').map(Number);
+      return (isNaN(h) ? 0 : h) * 60 + (isNaN(m) ? 0 : m);
+    };
+
+    const getDurationHours = (s, e) => {
+      const diff = timeToMinutes(e) - timeToMinutes(s);
+      return diff > 0 ? diff / 60 : 0;
+    };
+
+    const formatTimeShort = (t) => {
+      const [h, m] = t.split(':').map(Number);
+      const mm = String(m || 0).padStart(2, '0');
+      if (h === 0 || h === 24) return `١٢:${toAr(mm)} ص`;
+      if (h === 12) return `١٢:${toAr(mm)} م`;
+      if (h < 12) return `${toAr(h)}:${toAr(mm)} ص`;
+      return `${toAr(h - 12)}:${toAr(mm)} م`;
+    };
+
+    let state = {
+      selectedDayId: CHALLENGE_DAYS[0].id,
+      selectedCategory: 'projects',
+      logsByDay: {},
+      reflections: {},
+      diaryByDay: {},
+      adviceByDay: {},
+      day7AiSummary: '',
+      apiKey: '',
+      apiVerified: false,
+    };
+
+    let deferredPrompt = null;
+    let confirmResetArmed = false;
+    let sosInterval = null;
+    let sosSeconds = 60;
+    let toastTimer = null;
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const p = JSON.parse(raw);
+          state.logsByDay = p.logsByDay || {};
+          state.reflections = p.reflections || {};
+          state.diaryByDay = p.diaryByDay || {};
+          state.adviceByDay = p.adviceByDay || {};
+          state.day7AiSummary = p.day7AiSummary || '';
+          state.apiKey = p.apiKey || '';
+          state.apiVerified = Boolean(p.apiVerified);
+        }
+      } catch (e) {}
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          logsByDay: state.logsByDay,
+          reflections: state.reflections,
+          diaryByDay: state.diaryByDay,
+          adviceByDay: state.adviceByDay,
+          day7AiSummary: state.day7AiSummary,
+          apiKey: state.apiKey,
+          apiVerified: state.apiVerified,
+        }));
+      } catch (e) {}
+    }
+
+    function hasApiKey() {
+      return Boolean(state.apiKey && state.apiKey.trim().length > 10);
+    }
+
+    function showToast(msg, tone = 'dark') {
+      const wrap = document.getElementById('toast-wrap');
+      const cls = tone === 'success'
+        ? 'bg-[#141416] border-[#D4602D] text-white'
+        : tone === 'error'
+        ? 'bg-[#1F1212] border-red-500/60 text-red-200'
+        : 'bg-[#1C1C20] border-[#323238] text-white';
+      wrap.innerHTML = `<div class="${cls} px-4 py-3 rounded-xl border text-sm font-medium flex items-center justify-between gap-3 shadow-2xl"><span>${escapeHtml(msg)}</span><button type="button" id="btn-dismiss-toast" class="text-zinc-400 hover:text-white">✕</button></div>`;
+      wrap.classList.remove('hidden');
+      const dismissBtn = document.getElementById('btn-dismiss-toast');
+      if (dismissBtn) dismissBtn.addEventListener('click', () => wrap.classList.add('hidden'));
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => wrap.classList.add('hidden'), 3200);
+    }
+
+    async function callGemini(key, prompt, expectJson = false) {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${encodeURIComponent(key.trim())}`;
+      const body = {
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+          temperature: expectJson ? 0.2 : 0.7,
+          ...(expectJson ? { responseMimeType: 'application/json' } : {}),
+        },
+      };
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) {
+        let msg = `HTTP ${res.status}`;
+        try {
+          const err = await res.json();
+          if (err && err.error && err.error.message) msg = err.error.message;
+        } catch (e) {}
+        throw new Error(msg);
+      }
+      const data = await res.json();
+      const text = data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0] ? data.candidates[0].content.parts[0].text : '';
+      if (!text) throw new Error('لم يصل رد من النموذج.');
+      return text.trim();
+    }
+
+    function populateTimeSelects() {
+      const startSel = document.getElementById('start-time');
+      const endSel = document.getElementById('end-time');
+      const opts = [];
+      for (let h = 0; h <= 24; h++) {
+        const mins = h === 24 ? [0] : [0, 30];
+        for (const m of mins) {
+          const hh = String(h).padStart(2, '0');
+          const mm = String(m).padStart(2, '0');
+          const val = `${hh}:${mm}`;
+          let label = '';
+          if (h === 0 && m === 0) label = '١٢:٠٠ ص (منتصف الليل)';
+          else if (h === 24) label = '١٢:٠٠ ص (نهاية اليوم)';
+          else if (h === 12) label = `١٢:${toAr(mm)} م`;
+          else if (h < 12) label = `${toAr(h)}:${toAr(mm)} ص`;
+          else label = `${toAr(h - 12)}:${toAr(mm)} م`;
+          opts.push({ val, label });
+        }
+      }
+      startSel.innerHTML = opts.slice(0, -1).map((o) => `<option value="${o.val}" class="bg-[#141416] text-white">${o.label}</option>`).join('');
+      endSel.innerHTML = opts.slice(1).map((o) => `<option value="${o.val}" class="bg-[#141416] text-white">${o.label}</option>`).join('');
+      startSel.value = '07:00';
+      endSel.value = '09:00';
+    }
+
+    function renderAll() {
+      const dayIdx = CHALLENGE_DAYS.findIndex((d) => d.id === state.selectedDayId);
+      const day = CHALLENGE_DAYS[dayIdx] || CHALLENGE_DAYS[0];
+      const prevDay = dayIdx > 0 ? CHALLENGE_DAYS[dayIdx - 1] : null;
+      const logs = [...(state.logsByDay[day.id] || [])].sort((a, b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime));
+      const totalH = logs.reduce((s, l) => s + getDurationHours(l.startTime, l.endTime), 0);
+      const remH = Math.max(0, 24 - totalH);
+
+      document.getElementById('api-dot').classList.toggle('hidden', !hasApiKey());
+      document.getElementById('ai-badge').classList.toggle('hidden', !hasApiKey());
+      document.getElementById('selected-day-label').textContent = day.fullLabel;
+
+      // 7-Day Tabs
+      const tabsEl = document.getElementById('days-tabs');
+      tabsEl.innerHTML = CHALLENGE_DAYS.map((d) => {
+        const sel = d.id === day.id;
+        const dh = (state.logsByDay[d.id] || []).reduce((s, l) => s + getDurationHours(l.startTime, l.endTime), 0);
+        return `<button type="button" data-day-id="${d.id}" class="day-tab-btn shrink-0 min-w-[116px] sm:min-w-0 p-3 rounded-xl border text-right transition-all flex flex-col justify-between gap-1.5 ${sel ? 'bg-[#D4602D] border-[#D4602D] text-white' : 'bg-[#141416] border-[#26262A] text-zinc-300 hover:border-[#3F3F46] hover:bg-[#19191D]'}">
+          <div class="flex items-center justify-between w-full">
+            <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded ${sel ? 'bg-black/25 text-white' : 'bg-[#1F1F24] text-zinc-400'}">يوم ${toAr(d.dayNum)}</span>
+            <span class="text-[11px] font-medium ${sel ? 'text-white/90' : 'text-zinc-500'}">${toAr(Math.round(dh * 10) / 10)}/٢٤</span>
+          </div>
+          <div>
+            <div class="font-bold text-sm leading-tight text-white">${d.dayName}</div>
+            <div class="text-[11px] mt-0.5 ${sel ? 'text-white/85' : 'text-zinc-500'}">${d.shortDate}</div>
+          </div>
+        </button>`;
+      }).join('');
+
+      tabsEl.querySelectorAll('.day-tab-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          state.selectedDayId = btn.dataset.dayId;
+          renderAll();
+        });
+      });
+
+      // Reflection Card (Day 2+)
+      const refCard = document.getElementById('reflection-card');
+      if (day.dayNum >= 2 && prevDay) {
+        refCard.classList.remove('hidden');
+        document.getElementById('reflection-prev-badge').textContent = `${prevDay.dayName} - ${prevDay.shortDate}`;
+        const curRef = state.reflections[day.id] || { difficulty: null, trigger: '' };
+        const scaleEl = document.getElementById('difficulty-scale');
+        scaleEl.innerHTML = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => {
+          const active = curRef.difficulty === num;
+          return `<button type="button" data-diff="${num}" class="diff-btn py-2 rounded-lg text-xs sm:text-sm font-semibold border transition-colors ${active ? 'bg-[#D4602D] border-[#D4602D] text-white' : 'bg-[#1C1C20] border-[#2A2A30] text-zinc-300 hover:border-zinc-500'}">${toAr(num)}</button>`;
+        }).join('');
+        scaleEl.querySelectorAll('.diff-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const prev = state.reflections[day.id] || { difficulty: null, trigger: '' };
+            state.reflections[day.id] = { ...prev, difficulty: Number(btn.dataset.diff) };
+            saveState();
+            renderAll();
+          });
+        });
+        const trigInput = document.getElementById('trigger-input');
+        if (trigInput.value !== (curRef.trigger || '')) {
+          trigInput.value = curRef.trigger || '';
+        }
+      } else {
+        refCard.classList.add('hidden');
+      }
+
+      // 24h Coverage Bar
+      document.getElementById('coverage-summary').innerHTML = `${formatHoursAr(totalH)} مسجلة <span class="text-[#D4602D] font-semibold">(باقي ${formatHoursAr(remH)})</span>`;
+      const barEl = document.getElementById('coverage-bar');
+      if (logs.length === 0) {
+        barEl.innerHTML = `<div class="w-full h-full flex items-center justify-center text-xs text-zinc-500">ابدأ بتسجيل أول نشاط لليوم لتعبئة الشريط</div>`;
+      } else {
+        barEl.innerHTML = logs.map((l) => {
+          const dur = getDurationHours(l.startTime, l.endTime);
+          const pct = Math.min(100, (dur / 24) * 100);
+          const cat = CATEGORIES.find((c) => c.id === l.category) || CATEGORIES[0];
+          return `<div style="width:${pct}%;background-color:${cat.color};color:${cat.textColor}" title="${escapeHtml(l.title)} (${formatTimeShort(l.startTime)} - ${formatTimeShort(l.endTime)})" class="h-full border-l border-[#0B0B0C] last:border-l-0 flex items-center justify-center overflow-hidden px-1 text-[11px] font-semibold">${pct >= 10 ? cat.label : ''}</div>`;
+        }).join('');
+      }
+
+      document.getElementById('coverage-legend').innerHTML = CATEGORIES.map((cat) => {
+        const hrs = logs.filter((l) => l.category === cat.id).reduce((s, l) => s + getDurationHours(l.startTime, l.endTime), 0);
+        return `<div class="flex items-center gap-1.5 text-xs text-zinc-400 px-2.5 py-1 rounded-md bg-[#1C1C20] border border-[#26262A]"><span class="w-2 h-2 rounded-full" style="background-color:${cat.color}"></span><span>${cat.label}</span>${hrs > 0 ? `<span class="text-white font-semibold">${toAr(Math.round(hrs * 10) / 10)}س</span>` : ''}</div>`;
+      }).join('');
+
+      // Category buttons
+      const catWrap = document.getElementById('category-buttons');
+      catWrap.innerHTML = CATEGORIES.map((cat) => {
+        const active = state.selectedCategory === cat.id;
+        return `<button type="button" data-cat="${cat.id}" class="cat-btn px-3 py-2 rounded-lg text-xs sm:text-sm font-medium border transition-colors flex items-center justify-center gap-1.5 ${active ? 'bg-[#D4602D]/15 border-[#D4602D] text-white' : 'bg-[#1C1C20] border-[#2A2A30] text-zinc-300 hover:border-zinc-500'}"><span class="w-2 h-2 rounded-full shrink-0" style="background-color:${cat.color}"></span><span>${cat.label}</span></button>`;
+      }).join('');
+      catWrap.querySelectorAll('.cat-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          state.selectedCategory = btn.dataset.cat;
+          renderAll();
+        });
+      });
+
+      // Diary value & AI trigger
+      const diaryEl = document.getElementById('diary-input');
+      if (diaryEl.value !== (state.diaryByDay[day.id] || '')) {
+        diaryEl.value = state.diaryByDay[day.id] || '';
+      }
+      const diaryActionWrap = document.getElementById('diary-action-wrap');
+      if (hasApiKey()) {
+        diaryActionWrap.innerHTML = `<button id="btn-parse-diary" type="button" class="w-full py-2.5 rounded-lg bg-white hover:bg-zinc-200 text-[#0B0B0C] text-sm font-semibold transition-colors flex items-center justify-center gap-2"><span>تحويل بالذكاء الاصطناعي ✦</span></button>`;
+        document.getElementById('btn-parse-diary').addEventListener('click', handleParseDiary);
+      } else {
+        diaryActionWrap.innerHTML = `<button id="btn-activate-ai-1" type="button" class="w-full py-2.5 px-3 rounded-lg border border-dashed border-[#34343B] bg-[#1C1C20]/60 hover:border-[#D4602D] text-xs font-medium text-zinc-300 hover:text-white transition-colors flex items-center justify-center gap-2"><span>اضغط هنا لتفعيل الذكاء الاصطناعي</span></button>`;
+        document.getElementById('btn-activate-ai-1').addEventListener('click', openSettingsModal);
+      }
+
+      // Daily Log List
+      document.getElementById('log-count-badge').textContent = `${toAr(logs.length)} أنشطة`;
+      const listEl = document.getElementById('daily-log-list');
+      if (logs.length === 0) {
+        listEl.innerHTML = `<div class="rounded-xl border border-dashed border-[#2A2A30] bg-[#0F0F11] p-7 text-center"><p class="font-semibold text-sm text-zinc-300 mb-1">لا توجد أنشطة مسجلة لهذا اليوم</p><p class="text-xs text-zinc-500">أضف أول نشاط من النموذج أعلاه، أو انسخ روتين الأمس، أو اكتب سالفة يومك.</p></div>`;
+      } else {
+        listEl.innerHTML = logs.map((l) => {
+          const cat = CATEGORIES.find((c) => c.id === l.category) || CATEGORIES[0];
+          const mood = MOODS.find((m) => m.id === l.mood) || MOODS[0];
+          const dur = getDurationHours(l.startTime, l.endTime);
+          return `<div class="rounded-xl border border-[#26262A] bg-[#18181B] hover:border-[#36363D] transition-colors p-3 flex flex-wrap sm:flex-nowrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0 flex-1">
+              <span style="background-color:${cat.color}" class="w-1.5 h-10 rounded-full shrink-0"></span>
+              <div class="min-w-0">
+                <div class="font-semibold text-sm text-white truncate">${escapeHtml(l.title)}</div>
+                <div class="flex flex-wrap items-center gap-2 text-xs text-zinc-400 mt-1">
+                  <span class="bg-[#0B0B0C] border border-[#2A2A30] px-2 py-0.5 rounded text-zinc-200 font-medium">${formatTimeShort(l.startTime)} ← ${formatTimeShort(l.endTime)}</span>
+                  <span>${formatHoursAr(dur)}</span>
+                  <span class="text-zinc-600">•</span>
+                  <span>${cat.label}</span>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <button type="button" data-mood-id="${l.id}" class="mood-btn px-2.5 py-1.5 rounded-lg border border-[#2A2A30] bg-[#141416] hover:border-zinc-500 text-xs font-medium text-zinc-200 flex items-center gap-1.5"><span>${mood.emoji}</span><span>${mood.label}</span></button>
+              <button type="button" data-del-id="${l.id}" class="del-btn px-2.5 py-1.5 rounded-lg border border-[#2A2A30] bg-[#141416] hover:border-red-500/60 text-xs text-zinc-400 hover:text-red-400" title="حذف النشاط">🗑️</button>
+            </div>
+          </div>`;
+        }).join('');
+
+        listEl.querySelectorAll('.mood-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const id = btn.dataset.moodId;
+            state.logsByDay[day.id] = (state.logsByDay[day.id] || []).map((item) => {
+              if (item.id !== id) return item;
+              const idx = MOODS.findIndex((m) => m.id === item.mood);
+              return { ...item, mood: MOODS[(idx + 1) % MOODS.length].id };
+            });
+            saveState();
+            renderAll();
+          });
+        });
+
+        listEl.querySelectorAll('.del-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const id = btn.dataset.delId;
+            state.logsByDay[day.id] = (state.logsByDay[day.id] || []).filter((item) => item.id !== id);
+            saveState();
+            renderAll();
+            showToast('تم حذف النشاط.');
+          });
+        });
+      }
+
+      // Pattern Coach Advice
+      const refreshBtn = document.getElementById('btn-refresh-advice');
+      const adviceBox = document.getElementById('coach-advice-box');
+      if (hasApiKey()) {
+        refreshBtn.classList.remove('hidden');
+        refreshBtn.textContent = state.adviceByDay[day.id] ? 'تحديث النصيحة' : 'توليد نصيحة اليوم';
+        adviceBox.innerHTML = `<div class="rounded-xl bg-[#D4602D]/10 border border-[#D4602D]/30 p-3.5 text-sm text-zinc-200 leading-relaxed">${state.adviceByDay[day.id] ? escapeHtml(state.adviceByDay[day.id]) : '<span class="text-zinc-400 text-xs">اضغط "توليد نصيحة اليوم" لتحليل تقييم الأمس وجدولك وإعطائك نصيحة عملية في جملتين.</span>'}</div>`;
+      } else {
+        refreshBtn.classList.add('hidden');
+        adviceBox.innerHTML = `<button id="btn-activate-ai-2" type="button" class="w-full rounded-xl border border-dashed border-[#34343B] bg-[#1C1C20]/50 hover:border-[#D4602D] p-3 text-xs font-medium text-zinc-400 hover:text-white transition-colors">اضغط هنا لتفعيل الذكاء الاصطناعي والحصول على "نصيحة اليوم"</button>`;
+        document.getElementById('btn-activate-ai-2').addEventListener('click', openSettingsModal);
+      }
+
+      // Day 7 Summary
+      const day7El = document.getElementById('day7-summary');
+      if (day.dayNum === 7) {
+        day7El.classList.remove('hidden');
+        renderDay7Summary(day7El);
+      } else {
+        day7El.classList.add('hidden');
+      }
+
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    function renderDay7Summary(container) {
+      const catTotals = {};
+      CATEGORIES.forEach((c) => { catTotals[c.id] = 0; });
+      let totalHours = 0;
+      let activeDays = 0;
+      const diffs = [];
+      CHALLENGE_DAYS.forEach((d) => {
+        const ls = state.logsByDay[d.id] || [];
+        if (ls.length > 0) activeDays++;
+        ls.forEach((l) => {
+          const h = getDurationHours(l.startTime, l.endTime);
+          totalHours += h;
+          if (catTotals[l.category] !== undefined) catTotals[l.category] += h;
+        });
+        const r = state.reflections[d.id];
+        if (r && r.difficulty) diffs.push(r.difficulty);
+      });
+      const avgDiff = diffs.length ? (diffs.reduce((a, b) => a + b, 0) / diffs.length).toFixed(1) : null;
+      const topCat = CATEGORIES.reduce((best, c) => (catTotals[c.id] > (catTotals[best.id] || 0) ? c : best), CATEGORIES[0]);
+
+      const barsHtml = CATEGORIES.map((cat) => {
+        const hrs = catTotals[cat.id] || 0;
+        const pct = totalHours > 0 ? Math.round((hrs / totalHours) * 100) : 0;
+        return `<div class="flex items-center gap-3 text-xs">
+          <span class="w-24 shrink-0 text-zinc-300 font-medium">${cat.label}</span>
+          <div class="flex-1 h-2.5 rounded-full bg-[#0B0B0C] overflow-hidden"><div style="width:${pct}%;background-color:${cat.color}" class="h-full rounded-full"></div></div>
+          <span class="w-20 text-left shrink-0 text-zinc-400">${toAr(Math.round(hrs * 10) / 10)} س (${toAr(pct)}%)</span>
+        </div>`;
+      }).join('');
+
+      container.innerHTML = `
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-5 pb-4 border-b border-[#26262A]">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-xl bg-[#D4602D] flex items-center justify-center text-white text-xl">🏆</div>
+            <div>
+              <h2 class="text-lg sm:text-xl font-bold text-white">شرف إنجاز — ملخص تحدي نوميديا</h2>
+              <p class="text-xs text-zinc-400">٢٥ نوفمبر ٢٠٢٦ – ١ ديسمبر ٢٠٢٦ • ٧ أيام من الوعي الرقمي</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 no-print">
+            ${hasApiKey() ? `<button id="btn-day7-ai" type="button" class="px-3 py-2 rounded-lg bg-white hover:bg-zinc-200 text-[#0B0B0C] text-xs font-semibold">تلخيص ذكي ✦</button>` : ''}
+            <button id="btn-print-day7" type="button" class="px-3.5 py-2 rounded-lg bg-[#D4602D] hover:bg-[#E06D3B] text-white text-xs font-semibold">طباعة الشهادة</button>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+          <div class="rounded-xl border border-[#26262A] bg-[#1C1C20] p-3.5"><div class="text-xs text-zinc-400">إجمالي الساعات</div><div class="text-xl font-bold text-[#D4602D] mt-1">${toAr(Math.round(totalHours * 10) / 10)} ساعة</div></div>
+          <div class="rounded-xl border border-[#26262A] bg-[#1C1C20] p-3.5"><div class="text-xs text-zinc-400">الأيام المسجلة</div><div class="text-xl font-bold text-white mt-1">${toAr(activeDays)} / ٧ أيام</div></div>
+          <div class="rounded-xl border border-[#26262A] bg-[#1C1C20] p-3.5"><div class="text-xs text-zinc-400">أكثر نشاطاً</div><div class="text-sm font-bold text-white mt-1.5 truncate">${topCat.label}</div></div>
+          <div class="rounded-xl border border-[#26262A] bg-[#1C1C20] p-3.5"><div class="text-xs text-zinc-400">متوسط الصعوبة</div><div class="text-xl font-bold text-white mt-1">${avgDiff ? `${toAr(avgDiff)} / ١٠` : '—'}</div></div>
+        </div>
+        <div class="space-y-2.5 mb-5"><h3 class="text-xs font-semibold text-zinc-400">توزيع وقتك خلال الأسبوع</h3>${barsHtml}</div>
+        ${state.day7AiSummary ? `<div class="rounded-xl bg-[#D4602D]/10 border border-[#D4602D]/30 p-4 text-sm text-zinc-200 leading-relaxed"><div class="text-xs font-semibold text-[#D4602D] mb-1">رسالة ختام التحدي ✦</div><p>${escapeHtml(state.day7AiSummary)}</p></div>` : ''}
+      `;
+
+      document.getElementById('btn-print-day7').addEventListener('click', () => window.print());
+      const aiBtn = document.getElementById('btn-day7-ai');
+      if (aiBtn) {
+        aiBtn.addEventListener('click', async () => {
+          aiBtn.disabled = true;
+          aiBtn.textContent = 'جاري التلخيص...';
+          try {
+            const breakdown = CATEGORIES.map((c) => `${c.label}: ${(catTotals[c.id] || 0).toFixed(1)} ساعة`).join('، ');
+            const summary = await callGemini(state.apiKey, `اكتب شهادة وتلخيصاً مشجعاً لنهاية تحدي "نوميديا" (7 أيام بدون سوشال ميديا) بالعربية في 3 جمل قصيرة. إجمالي الساعات: ${totalHours.toFixed(1)} ساعة عبر ${activeDays} أيام. التوزيع: ${breakdown}.`, false);
+            state.day7AiSummary = summary;
+            saveState();
+            renderAll();
+          } catch (err) {
+            showToast(`تعذر إنشاء الملخص: ${err.message}`, 'error');
+            aiBtn.disabled = false;
+            aiBtn.textContent = 'تلخيص ذكي ✦';
+          }
+        });
+      }
+    }
+
+    async function handleParseDiary() {
+      const text = (state.diaryByDay[state.selectedDayId] || '').trim();
+      if (!text) {
+        showToast('اكتب سالفة يومك أولاً عشان نحولها لجدول.', 'error');
+        return;
+      }
+      const btn = document.getElementById('btn-parse-diary');
+      if (btn) { btn.disabled = true; btn.textContent = 'جاري التحليل...'; }
+      try {
+        const prompt = `حوّل النص التالي المكتوب بالعامية العربية إلى مصفوفة JSON فقط تمثل أنشطة اليوم. كل عنصر: {"startTime":"HH:MM","endTime":"HH:MM","title":"وصف قصير","category":"sleep|study|projects|fitness|rest|idle"}. النص: """${text}"""`;
+        const raw = await callGemini(state.apiKey, prompt, true);
+        const cleaned = raw.replace(/^```json\s*/i, '').replace(/```$/i, '').trim();
+        const parsed = JSON.parse(cleaned);
+        const arr = Array.isArray(parsed) ? parsed : parsed.blocks || parsed.activities || [];
+        const validIds = new Set(CATEGORIES.map((c) => c.id));
+        const blocks = arr
+          .filter((b) => b && b.startTime && b.endTime && getDurationHours(b.startTime, b.endTime) > 0)
+          .map((b, i) => ({
+            id: `${Date.now()}_ai_${i}`,
+            startTime: b.startTime,
+            endTime: b.endTime,
+            title: String(b.title || 'نشاط').slice(0, 60),
+            category: validIds.has(b.category) ? b.category : 'rest',
+            mood: 'calm',
+          }));
+        if (!blocks.length) {
+          showToast('لم أتمكن من استخراج أوقات واضحة، جرّب ذكر الساعات بشكل أوضح.', 'error');
+        } else {
+          state.logsByDay[state.selectedDayId] = [...(state.logsByDay[state.selectedDayId] || []), ...blocks];
+          saveState();
+          showToast(`تمت إضافة ${toAr(blocks.length)} أنشطة بالذكاء الاصطناعي.`, 'success');
+        }
+      } catch (err) {
+        showToast(`خطأ في التحليل: ${err.message}`, 'error');
+      } finally {
+        renderAll();
+      }
+    }
+
+    function openSettingsModal() {
+      confirmResetArmed = false;
+      document.getElementById('btn-reset-data').textContent = 'تصفير السجلات';
+      document.getElementById('btn-reset-data').className = 'py-2 px-3 rounded-lg border border-red-500/30 bg-red-950/20 hover:bg-red-950/40 text-red-300 text-xs font-medium';
+      document.getElementById('api-key-input').value = state.apiKey;
+      document.getElementById('api-status-box').classList.add('hidden');
+      const modal = document.getElementById('modal-settings');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeModal(id) {
+      const m = document.getElementById(id);
+      m.classList.add('hidden');
+      m.classList.remove('flex');
+    }
+
+    function startSosTimer() {
+      clearInterval(sosInterval);
+      sosSeconds = 60;
+      const el = document.getElementById('sos-timer-text');
+      el.textContent = `خذ نفساً عميقاً... باقي ${toAr(sosSeconds)} ثانية`;
+      sosInterval = setInterval(() => {
+        sosSeconds--;
+        if (sosSeconds <= 0) {
+          clearInterval(sosInterval);
+          el.textContent = 'أحسنت، تجاوزت موجة الرغبة.';
+        } else {
+          el.textContent = `خذ نفساً عميقاً... باقي ${toAr(sosSeconds)} ثانية`;
+        }
+      }, 1000);
+    }
+
+    function renderSosIdeas(ideas) {
+      document.getElementById('sos-ideas-list').innerHTML = ideas.map((idea, i) => `
+        <div class="rounded-xl bg-[#1C1C20] border border-[#2A2A30] p-3.5">
+          <div class="font-semibold text-sm text-white flex items-center gap-2.5">
+            <span class="w-5 h-5 rounded-md bg-[#D4602D] text-white flex items-center justify-center text-xs shrink-0">${toAr(i + 1)}</span>
+            <span>${escapeHtml(idea.title)}</span>
+          </div>
+          <p class="text-xs text-zinc-400 mt-1.5 pr-7 leading-relaxed">${escapeHtml(idea.detail)}</p>
+        </div>
+      `).join('');
+    }
+
+    document.getElementById('activity-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const s = document.getElementById('start-time').value;
+      const en = document.getElementById('end-time').value;
+      const note = document.getElementById('activity-note').value.trim();
+      if (getDurationHours(s, en) <= 0) {
+        showToast('وقت النهاية يجب أن يكون بعد وقت البداية.', 'error');
+        return;
+      }
+      const cat = CATEGORIES.find((c) => c.id === state.selectedCategory) || CATEGORIES[0];
+      const entry = {
+        id: `${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+        startTime: s,
+        endTime: en,
+        title: note || cat.label,
+        category: cat.id,
+        mood: 'calm',
+      };
+      state.logsByDay[state.selectedDayId] = [...(state.logsByDay[state.selectedDayId] || []), entry];
+      document.getElementById('activity-note').value = '';
+      if (timeToMinutes(en) < 24 * 60) {
+        document.getElementById('start-time').value = en;
+        const nextEnd = Math.min(24 * 60, timeToMinutes(en) + 120);
+        document.getElementById('end-time').value = `${String(Math.floor(nextEnd / 60)).padStart(2, '0')}:${String(nextEnd % 60).padStart(2, '0')}`;
+      }
+      saveState();
+      renderAll();
+      showToast(`تمت إضافة "${entry.title}" للجدول.`);
+    });
+
+    document.getElementById('diary-input').addEventListener('input', (e) => {
+      state.diaryByDay[state.selectedDayId] = e.target.value;
+      saveState();
+    });
+
+    document.getElementById('trigger-input').addEventListener('input', (e) => {
+      const prev = state.reflections[state.selectedDayId] || { difficulty: null, trigger: '' };
+      state.reflections[state.selectedDayId] = { ...prev, trigger: e.target.value };
+      saveState();
+    });
+
+    document.getElementById('btn-copy-yesterday').addEventListener('click', () => {
+      const idx = CHALLENGE_DAYS.findIndex((d) => d.id === state.selectedDayId);
+      if (idx <= 0) {
+        showToast('أنت في اليوم الأول — لا يوجد يوم سابق للنسخ.', 'error');
+        return;
+      }
+      const prevDay = CHALLENGE_DAYS[idx - 1];
+      const prevLogs = state.logsByDay[prevDay.id] || [];
+      if (!prevLogs.length) {
+        showToast(`جدول ${prevDay.dayName} فارغ حالياً.`, 'error');
+        return;
+      }
+      state.logsByDay[state.selectedDayId] = prevLogs.map((l, i) => ({ ...l, id: `${Date.now()}_c_${i}` }));
+      saveState();
+      renderAll();
+      showToast(`تم نسخ روتين ${prevDay.dayName} (${toAr(prevLogs.length)} أنشطة).`, 'success');
+    });
+
+    document.getElementById('btn-sos').addEventListener('click', async () => {
+      const m = document.getElementById('modal-sos');
+      m.classList.remove('hidden');
+      m.classList.add('flex');
+      startSosTimer();
+      const shuffled = [...OFFLINE_SOS_IDEAS].sort(() => Math.random() - 0.5).slice(0, 3);
+      renderSosIdeas(shuffled);
+      if (hasApiKey()) {
+        const badge = document.getElementById('sos-loading-badge');
+        badge.classList.remove('hidden');
+        try {
+          const nowStr = new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
+          const raw = await callGemini(state.apiKey, `الوقت الآن ${nowStr}. أعطني مصفوفة JSON فقط من 3 أنشطة فورية بدون شاشات لكسر الرغبة في فتح السوشال ميديا: [{"title":"عنوان","detail":"شرح قصير"}]`, true);
+          const parsed = JSON.parse(raw.replace(/^```json\s*/i, '').replace(/```$/i, '').trim());
+          if (Array.isArray(parsed) && parsed.length >= 3) renderSosIdeas(parsed.slice(0, 3));
+        } catch (e) {} finally {
+          badge.classList.add('hidden');
+        }
+      }
+    });
+
+    document.getElementById('btn-close-sos').addEventListener('click', () => { clearInterval(sosInterval); closeModal('modal-sos'); });
+    document.getElementById('btn-done-sos').addEventListener('click', () => { clearInterval(sosInterval); closeModal('modal-sos'); });
+    document.getElementById('btn-reset-sos-timer').addEventListener('click', startSosTimer);
+
+    document.getElementById('btn-settings').addEventListener('click', openSettingsModal);
+    document.getElementById('btn-close-settings').addEventListener('click', () => closeModal('modal-settings'));
+
+    document.getElementById('btn-toggle-key').addEventListener('click', () => {
+      const inp = document.getElementById('api-key-input');
+      inp.type = inp.type === 'password' ? 'text' : 'password';
+    });
+
+    document.getElementById('btn-test-api').addEventListener('click', async () => {
+      const key = document.getElementById('api-key-input').value.trim();
+      const box = document.getElementById('api-status-box');
+      if (!key) {
+        box.textContent = 'أدخل مفتاح API أولاً.';
+        box.className = 'p-3 rounded-lg border text-xs font-medium bg-red-950/40 border-red-500/40 text-red-200';
+        return;
+      }
+      const btn = document.getElementById('btn-test-api');
+      btn.disabled = true;
+      btn.textContent = 'جاري التحقق...';
+      try {
+        await callGemini(key, 'رد بكلمة واحدة فقط: متصل', false);
+        state.apiKey = key;
+        state.apiVerified = true;
+        saveState();
+        renderAll();
+        box.textContent = '✓ تم الاتصال بنجاح مع Gemini 3.5 Flash وحفظ المفتاح.';
+        box.className = 'p-3 rounded-lg border text-xs font-medium bg-[#D4602D]/10 border-[#D4602D]/40 text-white';
+        showToast('تم تفعيل الذكاء الاصطناعي بنجاح.', 'success');
+      } catch (err) {
+        box.textContent = `✕ تعذر الاتصال: ${err.message}`;
+        box.className = 'p-3 rounded-lg border text-xs font-medium bg-red-950/40 border-red-500/40 text-red-200';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'تحقق من الاتصال';
+      }
+    });
+
+    document.getElementById('btn-save-api').addEventListener('click', () => {
+      state.apiKey = document.getElementById('api-key-input').value.trim();
+      if (!state.apiKey) state.apiVerified = false;
+      saveState();
+      renderAll();
+      closeModal('modal-settings');
+      showToast(state.apiKey ? 'تم حفظ الإعدادات.' : 'تم مسح مفتاح API.');
+    });
+
+    document.getElementById('btn-export-json').addEventListener('click', () => {
+      const blob = new Blob([JSON.stringify({ logsByDay: state.logsByDay, reflections: state.reflections, diaryByDay: state.diaryByDay }, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'nomedia-backup-2026.json';
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('تم تحميل نسخة احتياطية من بياناتك.');
+    });
+
+    document.getElementById('btn-reset-data').addEventListener('click', () => {
+      const btn = document.getElementById('btn-reset-data');
+      if (!confirmResetArmed) {
+        confirmResetArmed = true;
+        btn.textContent = 'تأكيد المسح';
+        btn.className = 'py-2 px-3 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-semibold';
+      } else {
+        state.logsByDay = {};
+        state.reflections = {};
+        state.diaryByDay = {};
+        state.adviceByDay = {};
+        state.day7AiSummary = '';
+        saveState();
+        renderAll();
+        closeModal('modal-settings');
+        showToast('تم تصفير جميع السجلات.');
+      }
+    });
+
+    document.getElementById('btn-refresh-advice').addEventListener('click', async () => {
+      const btn = document.getElementById('btn-refresh-advice');
+      btn.disabled = true;
+      btn.textContent = 'جاري التحليل...';
+      try {
+        const dayIdx = CHALLENGE_DAYS.findIndex((d) => d.id === state.selectedDayId);
+        const prevDay = dayIdx > 0 ? CHALLENGE_DAYS[dayIdx - 1] : null;
+        const ref = state.reflections[state.selectedDayId] || {};
+        const logs = prevDay ? (state.logsByDay[prevDay.id] || []) : (state.logsByDay[state.selectedDayId] || []);
+        const summary = logs.map((l) => `${l.startTime}-${l.endTime} ${l.title}`).join(' | ');
+        const advice = await callGemini(state.apiKey, `أنت مدرب وعي رقمي في تطبيق نوميديا. صعوبة أمس: ${ref.difficulty || 'غير محدد'}/10. وقت الرغبة: ${ref.trigger || 'غير محدد'}. الأنشطة: ${summary || 'لا يوجد'}. اكتب نصيحة اليوم في جملتين فقط بالعامية البيضاء الودودة.`, false);
+        state.adviceByDay[state.selectedDayId] = advice;
+        saveState();
+      } catch (err) {
+        showToast(`تعذر جلب النصيحة: ${err.message}`, 'error');
+      } finally {
+        btn.disabled = false;
+        renderAll();
+      }
+    });
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+    });
+
+    document.getElementById('btn-install').addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const choice = await deferredPrompt.userChoice;
+        if (choice.outcome === 'accepted') showToast('تم تثبيت تطبيق نوميديا بنجاح.', 'success');
+        deferredPrompt = null;
+      } else {
+        const m = document.getElementById('modal-install');
+        m.classList.remove('hidden');
+        m.classList.add('flex');
+      }
+    });
+    document.getElementById('btn-close-install').addEventListener('click', () => closeModal('modal-install'));
+    document.getElementById('btn-ok-install').addEventListener('click', () => closeModal('modal-install'));
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
+
+    loadState();
+    populateTimeSelects();
+    renderAll();
+  </script>
+</body>
+</html>

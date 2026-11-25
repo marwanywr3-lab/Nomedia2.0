@@ -1,0 +1,21 @@
+{
+  "name": "نوميديا — NoMedia",
+  "short_name": "نوميديا",
+  "description": "تحدي 7 أيام بدون سوشال ميديا لتتبع وقتك اليومي بوعي وهدوء.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "dir": "rtl",
+  "lang": "ar",
+  "theme_color": "#0B0B0C",
+  "background_color": "#0B0B0C",
+  "icons": [
+    {
+      "src": "./image_1.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
